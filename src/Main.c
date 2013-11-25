@@ -12,7 +12,7 @@ static U32	gyrooffset = 0;	// ジャイロオフセット
 int flg = 0;	// フラグ
 
 S8 pwm_l,pwm_r;	// モータの回転角
-S8 cmd_forward = 10;
+S8 cmd_forward = 75;
 S8 cmd_turn = 0;
 
 // 関数プロトタイプ	
