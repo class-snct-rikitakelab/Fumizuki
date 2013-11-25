@@ -3,33 +3,33 @@
 #include "kernel.h"
 #include "kernel_id.h"
 #include "ecrobot_interface.h"
-#include "balancer.h" // <-@ƒoƒ‰ƒ“ƒT[‚ðŽg‚¤‚Æ‚«‚Í‚±‚ê‚ðŒÄ‚Ño‚³‚È‚¢‚Æ‚µ‚Ê‚Á‚Û‚¢H
+#include "balancer.h" // <-ã€€ãƒãƒ©ãƒ³ã‚µãƒ¼ã‚’ä½¿ã†ã¨ãã¯ã“ã‚Œã‚’å‘¼ã³å‡ºã•ãªã„ã¨ã—ã¬ã£ã½ã„ï¼Ÿ
 
-// ƒOƒ[ƒoƒ‹•Ï”
+// ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 static U32	avg_cnt = 0;
 static U32	cal_start_time;	
-static U32	gyrooffset = 0;	// ƒWƒƒƒCƒƒIƒtƒZƒbƒg
-int flg = 0;	// ƒtƒ‰ƒO
+static U32	gyrooffset = 0;	// ã‚¸ãƒ£ã‚¤ãƒ­ã‚ªãƒ•ã‚»ãƒƒãƒˆ
+int flg = 0;	// ãƒ•ãƒ©ã‚°
 
-S8 pwm_l,pwm_r;	// ƒ‚[ƒ^‚Ì‰ñ“]Šp
-S8 cmd_forward = 0;
+S8 pwm_l,pwm_r;	// ãƒ¢ãƒ¼ã‚¿ã®å›žè»¢è§’
+S8 cmd_forward = 10;
 S8 cmd_turn = 0;
 
-// ŠÖ”ƒvƒƒgƒ^ƒCƒv	
+// é–¢æ•°ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—	
 void caribration();
 
-//ƒJƒEƒ“ƒ^‚ÌéŒ¾
+//ã‚«ã‚¦ãƒ³ã‚¿ã®å®£è¨€
 DeclareCounter(SysTimerCnt);
 
-/*ƒ^ƒXƒN*/
+/*ã‚¿ã‚¹ã‚¯*/
 DeclareCounter(ActionTask);
 
-//‰Šúˆ—
+//åˆæœŸå‡¦ç†
 void ecrobot_device_initialize(void){
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 }
 
-//ŒãŽn––ˆ—
+//å¾Œå§‹æœ«å‡¦ç†
 void ecrobot_device_terminate(void){
 	ecrobot_set_motor_speed(NXT_PORT_B, 0);
 	ecrobot_set_motor_speed(NXT_PORT_C, 0);
@@ -84,23 +84,23 @@ TASK(ActionTask){
 	nxt_motor_set_speed(NXT_PORT_B , pwm_r , 1);
 
 
-	TerminateTask();	// <- –Y‚ê‚é‚ÆƒZƒOƒtƒH‚ª‚¨‚«‚Ä‚µ‚Ê 
+	TerminateTask();	// <- å¿˜ã‚Œã‚‹ã¨ã‚»ã‚°ãƒ•ã‚©ãŒãŠãã¦ã—ã¬ 
 }
 
 void caribration(){
 	//gyro_offset
-	// ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚é‚Ü‚Å‘Ò‹@
+	// ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã‚‹ã¾ã§å¾…æ©Ÿ
 	while (1){
 		if( ecrobot_get_touch_sensor(NXT_PORT_S4) )	break;
 	}
 	
-	// ‰¹‚ð–Â‚ç‚·
+	// éŸ³ã‚’é³´ã‚‰ã™
 	ecrobot_sound_tone(880, 512, 10);
-	/* ƒWƒƒƒCƒƒZƒ“ƒT‚Ì’l‚ðŒvŽZ‚·‚é‚½‚ß‚ÌŠJŽnŽžŠÔ‚ðƒZƒbƒg‚·‚é */
+	/* ã‚¸ãƒ£ã‚¤ãƒ­ã‚»ãƒ³ã‚µã®å€¤ã‚’è¨ˆç®—ã™ã‚‹ãŸã‚ã®é–‹å§‹æ™‚é–“ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ */
 	cal_start_time = ecrobot_get_systick_ms();
 
 	while((ecrobot_get_systick_ms() - cal_start_time) < 1000U){
-		/* ƒWƒƒƒCƒƒZƒ“ƒT‚ÌÝ’è‚ð‚·‚é */
+		/* ã‚¸ãƒ£ã‚¤ãƒ­ã‚»ãƒ³ã‚µã®è¨­å®šã‚’ã™ã‚‹ */
 		gyrooffset += ecrobot_get_gyro_sensor(NXT_PORT_S1);
 		avg_cnt++;
 	}
