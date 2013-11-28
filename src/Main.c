@@ -3,17 +3,33 @@
 #include "kernel.h"
 #include "kernel_id.h"
 #include "ecrobot_interface.h"
-#include "balancer.h" // <-　バランサーを使うときはこれを呼び出さないとしぬっぽい？
+#include "balancer.h" // 
+
+// enum 動作状態
+typedef enum{
+	MODE_INIT,
+	MODE_RUN
+} RUN_MODE;
+
+RUN_MODE run_mode = MODE_INIT;
+
+// 初期化の中の状態
+typedef enum{
+	INIT_WAIT_GYRO,
+	INIT_GYRO,
+	INIT_WAIT_WHITE,
+	INIT_WHITE,
+	INIT_WAIT_BLACK,
+	INIT_BLACK
+} INIT_MODE;
+
+
+INIT_MODE init_mode = INIT_WAIT_GYRO;
 
 // グローバル変数
 static U32	avg_cnt = 0;
-static U32	cal_start_time;	
-static U32	gyrooffset = 0;	// ジャイロオフセット
-int flg = 0;	// フラグ
-
-S8 pwm_l,pwm_r;	// モータの回転角
-S8 cmd_forward = 0;
-S8 cmd_turn = 100;
+static U32 gyrooffset;
+Balancer balancer;
 
 // 関数プロトタイプ	
 void caribration();
@@ -27,6 +43,7 @@ DeclareCounter(ActionTask);
 //初期処理
 void ecrobot_device_initialize(void){
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
+	balancer_init(&balancer);
 }
 
 //後始末処理
@@ -62,45 +79,81 @@ void user_1ms_isr_type2(void){
 
 
 TASK(ActionTask){
-	ecrobot_status_monitor("OSEK Hell_World!");
 
-	if(flg == 0){
-		caribration();
-		flg = 1;
+	switch(run_mode){
+		case MODE_INIT:
+			caribration();
+			break;
+		case MODE_RUN:
+			
+			break;
+		default:
+			break;
 	}
+	/*
 
-	balance_control(
-				(F32)cmd_forward,
-				(F32)cmd_turn,
-				(F32)ecrobot_get_gyro_sensor(NXT_PORT_S1),
-				(F32)gyrooffset,
-				(F32)nxt_motor_get_count(NXT_PORT_C),
-				(F32)nxt_motor_get_count(NXT_PORT_B),
-				(F32)ecrobot_get_battery_voltage(),
-				&pwm_l,
-				&pwm_r);
-
-	nxt_motor_set_speed(NXT_PORT_C , pwm_l , 1);
-	nxt_motor_set_speed(NXT_PORT_B , pwm_r , 1);
-
-
+	*/
 	TerminateTask();	// <- 忘れるとセグフォがおきてしぬ 
 }
 
 void caribration(){
+	static U32	cal_start_time;	
+
+	switch(init_mode){
+		case INIT_WAIT_GYRO:	// ボタンが押されるまでジャイロオフセットの初期化には遷移しない
+			if( ecrobot_get_touch_sensor(NXT_PORT_S4) ) init_mode = INIT_GYRO;
+			break;
+
+		case INIT_GYRO:			// ジャイロオフセットの初期化
+			// 音を鳴らす
+			ecrobot_sound_tone(880, 512, 10);
+			// ジャイロセンサの値を計算するための開始時間をセットする 
+			cal_start_time = ecrobot_get_systick_ms();
+
+			while((ecrobot_get_systick_ms() - cal_start_time) < 1000U){
+				// ジャイロセンサの設定をする 
+				gyrooffset += ecrobot_get_gyro_sensor(NXT_PORT_S1);
+				avg_cnt++;
+			}
+
+			gyrooffset /= avg_cnt;
+
+			set_gyro_offset(&balancer , gyrooffset);
+			ecrobot_sound_tone(440U, 500U, 10);		
+			systick_wait_ms(500);
+
+			init_mode = INIT_WAIT_WHITE;
+			break;
+
+		case INIT_WAIT_WHITE:	// ボタンが押されるまで白のキャリブレーションには遷移しない
+			if( ecrobot_get_touch_sensor(NXT_PORT_S4) ) init_mode = INIT_WHITE;
+			break;
+
+		case INIT_WHITE:		// 白のキャリブレーション
+			set_color_white(&balancer , ecrobot_get_light_sensor(NXT_PORT_S3) );
+			break;
+
+		case INIT_WAIT_BLACK:	// ボタンが押されるまで黒のキャリブレーションには遷移しない
+			if( ecrobot_get_touch_sensor(NXT_PORT_S4) ) init_mode = INIT_BLACK;
+			break;
+
+		case INIT_BLACK:
+			break;
+	}
+	
+	/*
 	//gyro_offset
 	// ボタンが押されるまで待機
-	while (1){
-		if( ecrobot_get_touch_sensor(NXT_PORT_S4) )	break;
-	}
+	if( ecrobot_get_touch_sensor(NXT_PORT_S4) )	 ;
+	
 	
 	// 音を鳴らす
 	ecrobot_sound_tone(880, 512, 10);
-	/* ジャイロセンサの値を計算するための開始時間をセットする */
+	// ジャイロセンサの値を計算するための開始時間をセットする 
 	cal_start_time = ecrobot_get_systick_ms();
 
 	while((ecrobot_get_systick_ms() - cal_start_time) < 1000U){
-		/* ジャイロセンサの設定をする */
+		// ジャイロセンサの設定をする 
 		gyrooffset += ecrobot_get_gyro_sensor(NXT_PORT_S1);
 		avg_cnt++;
 	}
@@ -108,6 +161,5 @@ void caribration(){
 	gyrooffset /= avg_cnt;
 	ecrobot_sound_tone(440U, 500U, 10);
 
-	systick_wait_ms(1500);
-	
+	*/
 }
