@@ -15,7 +15,7 @@ typedef enum{
 }INIT_MODE;
 
 RUN_MODE run_mode = MODE_INIT;
-INIT_MODE init_mode = INIT_GYRO;
+INIT_MODE init_mode = INIT_WAIT_GYRO;
 
 
 
@@ -110,18 +110,29 @@ void caribration(){
 
 	case (INIT_WHITE):
 		set_color_white(&balancer,ecrobot_get_light_sensor(NXT_PORT_S3));
+		ecrobot_sound_tone(440U, 500U, 10);
+		init_mode = INIT_WAIT_BLACK;
+		systick_wait_ms(500);
 		break;
 	case (INIT_BLACK):
+		set_color_white(&balancer,ecrobot_get_light_sensor(NXT_PORT_S3));
+		ecrobot_sound_tone(440U, 500U, 10);
+		run_mode = MODE_RUN;
+		systick_wait_ms(500);
 		break;
 
 	case (INIT_WAIT_GYRO):
 		if( ecrobot_get_touch_sensor(NXT_PORT_S4) == TRUE )init_mode=INIT_GYRO;
 		break;
 	case (INIT_WAIT_WHITE):
-		if( ecrobot_get_touch_sensor(NXT_PORT_S4) == TRUE )init_mode=INIT_WHITE;
+		if( ecrobot_get_touch_sensor(NXT_PORT_S4) == TRUE ){
+			init_mode=INIT_WHITE;
+		}
 		break;
 	case (INIT_WAIT_BLACK):
-		if( ecrobot_get_touch_sensor(NXT_PORT_S4) == TRUE )init_mode=INIT_BLACK;
+		if( ecrobot_get_touch_sensor(NXT_PORT_S4) == TRUE ){
+			init_mode=INIT_BLACK;
+		}
 		break;
 }
 

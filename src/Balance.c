@@ -1,5 +1,4 @@
 #include "Balance.h"
-#include "ecrobot_interface.h"
 
 void balancer_init(Balancer *self){
 	self->gyro_offset = 0; 
