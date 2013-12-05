@@ -13,7 +13,8 @@ DRIVENPART_SOURCES :=
 # User application source
 TARGET_SOURCES := \
 	Main.c \
-	balancer_param.c
+	balancer_param.c \
+	Balance.c
 
 TOPPERS_OSEK_OIL_SOURCE := ./prog.oil
 

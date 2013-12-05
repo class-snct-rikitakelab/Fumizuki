@@ -1,10 +1,5 @@
 #include"Main.h"
 
-#include "kernel.h"
-#include "kernel_id.h"
-#include "ecrobot_interface.h"
-#include "balancer.h" // <-　バランサーを使うときはこれを呼び出さないとしぬっぽい？
-
 typedef enum{
 	MODE_INIT,
 	MODE_RUN
@@ -22,7 +17,6 @@ typedef enum{
 RUN_MODE run_mode = MODE_INIT;
 INIT_MODE init_mode = INIT_GYRO;
 
-Balancer balancer;
 
 
 // グローバル変数
@@ -109,7 +103,7 @@ void caribration(){
 		gyrooffset /= avg_cnt;
 		ecrobot_sound_tone(440U, 500U, 10);
 
-		set_gyro_offset(&balancer,gyrooffset);
+		//set_gyro_offset(&balancer,gyrooffset);
 		systick_wait_ms(500);
 		init_mode= INIT_WAIT_WHITE;
 		break;
