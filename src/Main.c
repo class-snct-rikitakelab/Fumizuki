@@ -1,9 +1,4 @@
-#include"Main.h"
-
-#include "kernel.h"
-#include "kernel_id.h"
-#include "ecrobot_interface.h"
-#include "balancer.h" // <-　バランサーを使うときはこれを呼び出さないとしぬっぽい？
+#include "Main.h"
 
 
 typedef enum {
@@ -27,12 +22,13 @@ RUN_MODE run_mode = MODE_INIT;
 INIT_MODE init_mode = INIT_WAIT_GYRO;
 
 
+
 // グローバル変数
-static U32	avg_cnt = 0;
+static U32 avg_cnt = 0;
 
 Balancer balancer;
 
-
+static U32 gyrooffset;
 
 
 // 関数プロトタイプ	
@@ -126,9 +122,7 @@ void caribration(){
 	switch(init_mode){
 		
 		case INIT_WAIT_GYRO://ジャイロ待機
-			if( ecrobot_get_touch_sensor(NXT_PORT_S4);
-
-			init mode = INIT_GYRO;
+			if( ecrobot_get_touch_sensor(NXT_PORT_S4))init_mode = INIT_GYRO;
 			break;
 
 		case INIT_GYRO:
@@ -149,24 +143,29 @@ void caribration(){
 			set_gyro_offset(&balancer,gyrooffset);
 			systick_wait_ms(500);
 
-			init_mode = INIT_WAIT_WHITE
+			init_mode = INIT_WAIT_WHITE;
 			break;
 
 		case INIT_WAIT_WHITE://白認識待機
-			if( ecrobot_get_touch_sensor(NXT_PORT_S4);
-			init mode = INIT_WHITE;
+			if( ecrobot_get_touch_sensor(NXT_PORT_S4))init_mode = INIT_WHITE;
 			break;
 
 		case INIT_WHITE:
+			ecrobot_sound_tone(880, 512, 10);
 			set_color_white(&balancer,ecrobot_get_light_sensor(NXT_PORT_S3));
+			init_mode =INIT_WAIT_BLACK;
+			systick_wait_ms(500);
 			break;
 
 		case INIT_WAIT_BLACK://黒認識待機
-			if( ecrobot_get_touch_sensor(NXT_PORT_S4);
-			init mode = INIT_BLACK;
+			if( ecrobot_get_touch_sensor(NXT_PORT_S4))init_mode = INIT_BLACK;
 			break;
 
 		case INIT_BLACK:
+			ecrobot_sound_tone(880, 512, 10);
+			set_color_black(&balancer,ecrobot_get_light_sensor(NXT_PORT_S3));
+			run_mode = MODE_RUN;
+			systick_wait_ms(500);
 			break;
 
 		default:
@@ -182,11 +181,11 @@ void caribration(){
 	
 	// 音を鳴らす
 	ecrobot_sound_tone(880, 512, 10);
-	/* ジャイロセンサの値を計算するための開始時間をセットする
+	// ジャイロセンサの値を計算するための開始時間をセットする
 	cal_start_time = ecrobot_get_systick_ms();
 
 	while((ecrobot_get_systick_ms() - cal_start_time) < 1000U){
-		/* ジャイロセンサの設定をする 
+		// ジャイロセンサの設定をする 
 		gyrooffset += ecrobot_get_gyro_sensor(NXT_PORT_S1);
 		avg_cnt++;
 	}
