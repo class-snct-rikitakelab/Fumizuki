@@ -1,5 +1,5 @@
 # Target specific macros
-TARGET = MOMIMOMI
+TARGET = TORITSU_NOMI
 
 NXTOSEK_ROOT = /cygdrive/c/cygwin/nxtOSEK
 
@@ -13,7 +13,8 @@ DRIVENPART_SOURCES :=
 # User application source
 TARGET_SOURCES := \
 	Main.c \
-	balancer_param.c
+	balancer_param.c \
+	Balancer_running.c
 
 TOPPERS_OSEK_OIL_SOURCE := ./prog.oil
 

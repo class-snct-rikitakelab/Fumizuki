@@ -1,9 +1,6 @@
 #include"Main.h"
 
-#include "kernel.h"
-#include "kernel_id.h"
-#include "ecrobot_interface.h"
-#include "balancer.h" // 
+
 
 // enum 動作状態
 typedef enum{
@@ -130,7 +127,10 @@ void caribration(){
 			break;
 
 		case INIT_WHITE:		// 白のキャリブレーション
+			ecrobot_sound_tone(880, 512, 10);	// 音を出す
 			set_color_white(&balancer , ecrobot_get_light_sensor(NXT_PORT_S3) );
+			init_mode = INIT_WAIT_BLACK;
+			systick_wait_ms(500);
 			break;
 
 		case INIT_WAIT_BLACK:	// ボタンが押されるまで黒のキャリブレーションには遷移しない
@@ -138,7 +138,12 @@ void caribration(){
 			break;
 
 		case INIT_BLACK:
+			ecrobot_sound_tone(880, 512, 10);
+			set_color_black(&balancer , ecrobot_get_light_sensor(NXT_PORT_S3) );
+			run_mode = MODE_RUN;
+			systick_wait_ms(500);
 			break;
+
 	}
 	
 	/*
