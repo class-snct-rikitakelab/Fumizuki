@@ -82,7 +82,11 @@ TASK(ActionTask){
 			caribration();
 			break;
 		case MODE_RUN:
-			
+			ecrobot_debug1(balancer.color_white, balancer.color_black , 0);
+			// 黒の値-50より大きければ音を鳴らす
+			if( ecrobot_get_light_sensor(NXT_PORT_S3) >= balancer.color_black-50 ){
+				ecrobot_sound_tone(720 , 200 , 10);
+			}
 			break;
 		default:
 			break;
