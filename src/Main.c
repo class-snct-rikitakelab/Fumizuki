@@ -78,6 +78,7 @@ TASK(ActionTask){
 			caribration();
 			break;
 		case (MODE_RUN):
+			ecrobot_debug1(balancer.color_white,balancer.color_black,0);
 			break;
 	}
 
