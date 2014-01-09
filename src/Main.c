@@ -17,7 +17,8 @@ typedef enum{
 	INIT_WAIT_WHITE,
 	INIT_WHITE,
 	INIT_WAIT_BLACK,
-	INIT_BLACK
+	INIT_BLACK,
+	INIT_WAIT
 } INIT_MODE;
 
 
@@ -142,9 +143,12 @@ void caribration(){
 		case INIT_BLACK:
 			ecrobot_sound_tone(880, 512, 10);
 			set_color_black(&balancer , ecrobot_get_light_sensor(NXT_PORT_S3) );
-			run_mode = MODE_RUN;
+			init_mode = INIT_WAIT;
 			systick_wait_ms(500);
 			break;
+	
+		case INIT_WAIT:
+			if( ecrobot_get_touch_sensor(NXT_PORT_S4) ) run_mode = MODE_RUN;
 
 	}
 	
