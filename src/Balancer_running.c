@@ -21,6 +21,10 @@ void balance_running( Balancer *self ){
 				(F32)ecrobot_get_battery_voltage(),
 				&pwm_l,
 				&pwm_r);
+	// これを書かないとモータが動かなくて死ぬ
+	nxt_motor_set_speed(NXT_PORT_C , pwm_l , 1);
+	nxt_motor_set_speed(NXT_PORT_B , pwm_r , 1);
+
 
 }
 

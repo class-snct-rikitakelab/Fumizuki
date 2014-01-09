@@ -83,7 +83,7 @@ TASK(ActionTask){
 			break;
 		case MODE_RUN:
 			calc_cmd_turn(&balancer);
-			balance_running(&balancer);			
+			balance_running(&balancer);
 			ecrobot_debug1(balancer.color_white, balancer.color_black , 0);
 			break;
 		default:
