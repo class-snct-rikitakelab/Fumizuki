@@ -14,7 +14,11 @@ DRIVENPART_SOURCES :=
 TARGET_SOURCES := \
 	Main.c \
 	balancer_param.c \
+<<<<<<< HEAD
 	Balancer_running.c
+=======
+	Balance.c
+>>>>>>> 9b3817fe6a16ca223e7edbf1f76593e2934c7bf5
 
 TOPPERS_OSEK_OIL_SOURCE := ./prog.oil
 
