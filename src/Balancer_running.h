@@ -1,6 +1,7 @@
 #ifndef BALANCER
 #define BALANCER
 #include "Main.h"
+#include "balancer.h"
 
 typedef struct{
 	U32 gyro_offset;	

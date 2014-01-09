@@ -4,18 +4,16 @@ void balancer_init( Balancer* self ){
 	self->gyro_offset = 0;
 	self->color_white = 0;
 	self->color_black = 0;
-	self->cmd_forward = 0;
+	self->cmd_forward = 30;
 	self->cmd_turn    = 0;
 }
 
 void balance_running( Balancer *self ){
 	S8 pwm_l,pwm_r;	// モータの回転角
-	S8 cmd_forward = 0;	// 前進
-	S8 cmd_turn = 100;	// 旋回
 
 	balance_control(
-				(F32)cmd_forward,
-				(F32)cmd_turn,
+				(F32)self->cmd_forward,
+				(F32)self->cmd_turn,
 				(F32)ecrobot_get_gyro_sensor(NXT_PORT_S1),
 				(F32)self->gyro_offset,
 				(F32)nxt_motor_get_count(NXT_PORT_C),
