@@ -1,5 +1,5 @@
 # Target specific macros
-TARGET = FUMIZUKI
+TARGET = PID
 
 NXTOSEK_ROOT = /cygdrive/c/cygwin/nxtOSEK
 
