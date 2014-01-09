@@ -1,5 +1,5 @@
 # Target specific macros
-TARGET = TORITSU_NOMI
+TARGET = FUMIZUKI
 
 NXTOSEK_ROOT = /cygdrive/c/cygwin/nxtOSEK
 
