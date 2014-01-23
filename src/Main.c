@@ -40,12 +40,14 @@ DeclareCounter(ActionTask);
 
 //初期処理
 void ecrobot_device_initialize(void){
+	ecrobot_init_bt_slave("LEJOS-OSEK");	// BlueToothを使うときの初期処理
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 	balancer_init(&balancer);
 }
 
 //後始末処理
 void ecrobot_device_terminate(void){
+	ecrobot_term_bt_connection();	// BlueTooth終了処理
 	ecrobot_set_motor_speed(NXT_PORT_B, 0);
 	ecrobot_set_motor_speed(NXT_PORT_C, 0);
 }
@@ -86,6 +88,7 @@ TASK(ActionTask){
 			calc_cmd_turn_pid(&balancer);
 			balance_running(&balancer);
 			ecrobot_debug1(balancer.color_white, balancer.color_black , 0);
+			logSend(balancer.color_white , balancer.color_black , ecrobot_get_light_sensor(NXT_PORT_S3) ,0,0,0,0,0);
 			break;
 		default:
 			break;

@@ -14,7 +14,8 @@ DRIVENPART_SOURCES :=
 TARGET_SOURCES := \
 	Main.c \
 	balancer_param.c \
-	Balancer_running.c
+	Balancer_running.c\
+	logSend.c
 
 TOPPERS_OSEK_OIL_SOURCE := ./prog.oil
 
